@@ -47,3 +47,17 @@ The website is built using **HTML** and **CSS**, with images/media stored in the
 ## Repository
 - GitHub: https://github.com/pandaM-cloud/t-tall.git
 
+## Pictures of my GUI
+<img width="746" height="751" alt="bean" src="https://github.com/user-attachments/assets/68debc1a-edab-40fa-a78e-29f5d8c2351e" />
+<img width="1221" height="1288" alt="TUMI" src="https://github.com/user-attachments/assets/cf4dd772-ec2f-4d15-887c-2627c0066515" />
+<img width="960" height="1280" alt="burgersfort" src="https://github.com/user-attachments/assets/51a18b10-8169-45cc-b328-2d26dbd32a00" />
+<img width="1200" height="1600" alt="me" src="https://github.com/user-attachments/assets/5b264a83-120e-48fd-8409-106c50450614" />
+<img width="1536" height="2048" alt="sj" src="https://github.com/user-attachments/assets/5d38a6d4-759d-4ba8-ab38-df84643602d7" />
+<img width="959" height="1280" alt="black" src="https://github.com/user-attachments/assets/de3c575d-0296-4071-9c94-7fa54dbb84f5" />
+
+
+
+
+
+
+
