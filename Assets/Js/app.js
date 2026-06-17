@@ -458,7 +458,179 @@
     revealEls.forEach((el) => obs.observe(el));
   }
 
-  document.addEventListener('DOMContentLoaded', () => {
+  // -------------------- Data-driven DOM rendering (advanced) --------------------
+  function domReady(fn) {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', fn);
+    } else {
+      fn();
+    }
+  }
+
+  function ensureMarker(container, markerValue) {
+    if (!container) return false;
+    if (container.dataset && container.dataset.ttallRender === markerValue) return true;
+    container.dataset.ttallRender = markerValue;
+    return true;
+  }
+
+  function renderCardsFromData({ container, data, buildCard, emptyPolicy }) {
+    if (!container) return;
+    ensureMarker(container, container.dataset.ttallRender || '1');
+
+    // Prevent double render. If already rendered, skip.
+    if (container.dataset.ttallRendered === '1') return;
+
+    const shouldRender = emptyPolicy === 'onlyEmpty' ? container.children.length === 0 : true;
+    if (!shouldRender) return;
+
+    const frag = document.createDocumentFragment();
+    data.forEach((item) => frag.appendChild(buildCard(item)));
+    container.appendChild(frag);
+    container.dataset.ttallRendered = '1';
+  }
+
+  function initDynamicReviews() {
+    const container = document.querySelector('.reviews-container');
+    if (!container) return;
+
+    // If there are already static cards, don't replace them.
+    const data = [
+      {
+        name: 'R.BEAN',
+        meta: '4 months ago',
+        text: 'Pure self-confidence booster. Higly recommended',
+        avatar: 'Assets/img/bean.jpeg',
+      },
+      {
+        name: 'A.TEMA',
+        meta: '2 weeks ago',
+        text: 'Great Service.. very happy with the results... great atmosphere, friendly people... I\'ll be back.',
+        avatar: 'Assets/img/TEMA.jpeg',
+      },
+      {
+        name: 'L.TLHOLO',
+        meta: '2 weeks ago',
+        text: 'Best Barbershop in Town. Also possible to cut Childrens hair.',
+        avatar: 'Assets/img/lilbro.jpeg',
+      },
+    ];
+
+    const buildCard = (r) => {
+      const card = document.createElement('div');
+      card.className = 'review-card';
+
+      const header = document.createElement('div');
+      header.className = 'review-header';
+
+      const avatar = document.createElement('div');
+      avatar.className = 'avatar';
+      const img = document.createElement('img');
+      img.src = r.avatar;
+      img.alt = r.name;
+      avatar.appendChild(img);
+
+      const info = document.createElement('div');
+
+      const name = document.createElement('div');
+      name.className = 'name';
+      name.textContent = r.name;
+
+      const stars = document.createElement('div');
+      stars.className = 'stars';
+      stars.innerHTML = '★★★★★ <span class="meta"></span>';
+      const meta = stars.querySelector('.meta');
+      if (meta) meta.textContent = r.meta;
+
+      info.appendChild(name);
+      info.appendChild(stars);
+
+      header.appendChild(avatar);
+      header.appendChild(info);
+
+      const text = document.createElement('div');
+      text.className = 'review-text';
+      text.textContent = `"${r.text}"`;
+
+      card.appendChild(header);
+      card.appendChild(text);
+      return card;
+    };
+
+    renderCardsFromData({
+      container,
+      data,
+      buildCard,
+      emptyPolicy: 'onlyEmpty',
+    });
+  }
+
+  function initDynamicServicesPriceList() {
+    const container = document.querySelector('.container-price');
+    if (!container) return;
+
+    // Only render if the container is empty (won\'t break your current index.html static cards)
+    const data = [
+      { img: 'Assets/img/lilbro.jpeg', alt: 'cut and dye', title: 'Cut & Black Dye (Fibre included)', badge: 'R250', time: '1 Hour' },
+      { img: 'Assets/img/fade1.jpeg', alt: 'Turfloop Store', title: 'Fade <br>(Fibre included)', badge: 'R150', time: '45 minutes' },
+      { img: 'Assets/img/brush1.jpeg', alt: 'brush', title: 'Brush<br>(fibre included)', badge: 'R80', time: '15 minutes' },
+      { img: 'Assets/img/com.avif', alt: 'Upcoming Store', title: 'chiskop Razor', badge: 'R70', time: '30min' },
+      { img: 'Assets/img/chiskop.jpeg', alt: 'Turfloop Store', title: 'Chiskop', badge: 'R60', time: '30min' },
+      { img: 'Assets/img/eye.jpeg', alt: 'Turfloop Store', title: 'Eyebrows', badge: 'R40', time: '10min' },
+      { img: 'Assets/img/lined1.jpeg', alt: 'Turfloop Store', title: 'Line Design', badge: 'R40', time: '30min' },
+      { img: 'Assets/img/3d.jpeg', alt: 'Turfloop Store', title: '3D Line Design Only', badge: 'R120', time: '35 min' },
+      { img: 'Assets/img/bleasher.jpeg', alt: 'Turfloop Store', title: 'Bleach Only', badge: 'R150', time: '45 min' },
+      { img: 'Assets/img/com.avif', alt: 'Turfloop Store', title: 'Black Dye Only', badge: 'R100', time: '30 min' },
+      { img: 'Assets/img/blue.jpeg', alt: 'Turfloop Store', title: 'Colour', badge: 'R100', time: '30 min' },
+      { img: 'Assets/img/com.avif', alt: 'Turfloop Store', title: 'House Call', badge: 'R600', time: '1 hour 30 min' },
+    ];
+
+    const buildCard = (s) => {
+      const card = document.createElement('div');
+      card.className = 'card-price';
+
+      const img = document.createElement('img');
+      img.src = s.img;
+      img.alt = s.alt;
+      card.appendChild(img);
+
+      const content = document.createElement('div');
+      content.className = 'card-content-price';
+
+      const titleRow = document.createElement('div');
+      titleRow.className = 'title-row-price';
+
+      const h2 = document.createElement('h2');
+      h2.className = 'Turf-price';
+      h2.innerHTML = s.title;
+
+      const badge = document.createElement('span');
+      badge.className = 'badge-price';
+      badge.innerHTML = `<b>${s.badge}</b>`;
+
+      titleRow.appendChild(h2);
+      titleRow.appendChild(badge);
+
+      const time = document.createElement('p');
+      time.className = 'queue-price';
+      time.textContent = s.time;
+
+      content.appendChild(titleRow);
+      content.appendChild(time);
+
+      card.appendChild(content);
+      return card;
+    };
+
+    renderCardsFromData({
+      container,
+      data,
+      buildCard,
+      emptyPolicy: 'onlyEmpty',
+    });
+  }
+
+  domReady(() => {
     initScrollToTop();
     initReveal();
 
@@ -468,6 +640,10 @@
 
     // Enquiry page form UI
     initEnquiryForm();
+
+    // Dynamic DOM rendering (reviews + services)
+    initDynamicReviews();
+    initDynamicServicesPriceList();
 
     // Global text animations across pages
     initGlobalTextReveal();
