@@ -1,4 +1,4 @@
-# T-Tall Barbershop Website (Part 2)
+# T-Tall Barbershop Website 
 
 ## Student Information
 - **Student Name:** Molatelo Setsiba
@@ -7,7 +7,7 @@
 - **Institution:** Rosebank International (WEDE5020)
 
 ## Project Title
-**T-Tall Barbershop Website (Part 2)**
+**T-Tall Barbershop Website **
 
 ## Project Overview
 This project is a multi-page website for **T-Tall Barbershop**. It provides visitors with information about the barbershop, the services offered, contact/enquiry options, and a structured navigation flow across key pages.
