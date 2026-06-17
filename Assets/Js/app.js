@@ -630,9 +630,103 @@
     });
   }
 
+  function initLightbox() {
+    const lightbox = document.querySelector('.ttall-lightbox');
+    if (!lightbox) return;
+
+    const imgEl = lightbox.querySelector('.ttall-lightbox__img');
+    const captionEl = lightbox.querySelector('.ttall-lightbox__caption');
+    const closeBtn = lightbox.querySelector('.ttall-lightbox__close');
+    const backdrop = lightbox.querySelector('.ttall-lightbox__backdrop');
+
+    const STORAGE_SCROLL_KEY = 'ttall_lightbox_scroll_lock_prev_overflow';
+
+    let lastFocused = null;
+
+    const getCaption = (img) => {
+      const fromData = img && (img.getAttribute('data-caption') || img.getAttribute('title') || img.getAttribute('alt'));
+      if (!fromData) return '';
+      return fromData;
+    };
+
+    const open = (img) => {
+      if (!img) return;
+
+      lastFocused = document.activeElement;
+
+      const src = img.getAttribute('data-full') || img.currentSrc || img.src;
+      if (!src) return;
+
+      imgEl.src = src;
+      imgEl.alt = img.getAttribute('alt') || '';
+      if (captionEl) captionEl.textContent = getCaption(img) || '';
+
+      document.body.style.overflow = 'hidden';
+      lightbox.classList.add('is-open');
+      lightbox.setAttribute('aria-hidden', 'false');
+
+      if (closeBtn) closeBtn.focus();
+    };
+
+    const close = () => {
+      lightbox.classList.remove('is-open');
+      lightbox.setAttribute('aria-hidden', 'true');
+      if (imgEl) imgEl.src = '';
+
+      // restore scroll
+      const prev = sessionStorage.getItem(STORAGE_SCROLL_KEY);
+      if (prev !== null) {
+        document.body.style.overflow = prev;
+        sessionStorage.removeItem(STORAGE_SCROLL_KEY);
+      } else {
+        document.body.style.overflow = '';
+      }
+
+      if (lastFocused && typeof lastFocused.focus === 'function') lastFocused.focus();
+    };
+
+    // Click handling via delegation (performance)
+    document.addEventListener('click', (e) => {
+      const target = e.target;
+      if (!target) return;
+
+      // Only open when clicking an image.
+      if (target.tagName !== 'IMG') return;
+
+      // Exclude tiny icons/logos if needed (keep simple): only if image is reasonably large
+      const w = target.naturalWidth || target.width;
+      if (w && w < 40) return;
+
+      // Skip if it's inside the lightbox itself
+      if (lightbox.contains(target)) return;
+
+      // store previous overflow only when opening first time
+      if (!lightbox.classList.contains('is-open')) {
+        sessionStorage.setItem(STORAGE_SCROLL_KEY, document.body.style.overflow || '');
+      }
+
+      e.preventDefault();
+      open(target);
+    }, { passive: false });
+
+    // Close actions
+    if (closeBtn) closeBtn.addEventListener('click', close);
+    if (backdrop) backdrop.addEventListener('click', close);
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && lightbox.classList.contains('is-open')) {
+        e.preventDefault();
+        close();
+      }
+    });
+  }
+
   domReady(() => {
     initScrollToTop();
     initReveal();
+
+    initLightbox();
+
 
     // About page store UI
     initStoreCards();
