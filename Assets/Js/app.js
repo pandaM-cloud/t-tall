@@ -44,18 +44,18 @@
     btn.type = 'button';
     btn.setAttribute('aria-label', 'Back to top');
     btn.style.position = 'fixed';
-    btn.style.right = '16px';
+    btn.style.right = '0px';
     btn.style.bottom = '16px';
-    btn.style.zIndex = '99998';
-    btn.style.padding = '10px 12px';
-    btn.style.borderRadius = '999px';
+    btn.style.zIndex = '98';
+    btn.style.padding = '0px 3px';
+    btn.style.borderRadius = '9px';
     btn.style.border = '1px solid rgba(255,255,255,0.2)';
-    btn.style.background = 'rgba(0,0,0,0.7)';
-    btn.style.color = '#fff';
+    btn.style.background = 'rgba(255, 255, 255, 0.33)';
+    btn.style.color = '#fcfcfc';
     btn.style.cursor = 'pointer';
     btn.style.display = 'none';
     btn.style.fontSize = '14px';
-    btn.innerHTML = '↑ Top';
+    btn.innerHTML = 'Scroll to Top';
 
     btn.addEventListener('click', () => {
       window.scrollTo({ top: 0, behavior: prefersReducedMotion ? 'auto' : 'smooth' });

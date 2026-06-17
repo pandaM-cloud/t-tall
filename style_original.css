@@ -2167,6 +2167,32 @@ button a {
 
 
 
+/* =========================
+   Page transitions (fade in on load, fade out on navigation)
+   (added for better performance; JS handles adding/removing classes on body)
+   ========================= */
 
+@view-transition{
+  navigation: auto;
+}
 
+::view-transition-group(root) {
+  animation-duration: 1s;
+  animation-timing-function: ease;
+}
 
+::view-transition-old(root) {
+  animation-name: slide-out;
+}
+
+::view-transition-new(root) {
+  animation-name: slide-in;
+}
+
+@keyframes slide-out {
+  to { translate: -100vw; }
+}
+
+@keyframes slide-in {
+   from { translate: 100vw; }
+}
