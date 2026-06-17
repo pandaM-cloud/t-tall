@@ -630,6 +630,61 @@
     });
   }
 
+  // -------------------- Dynamic products/posts listing --------------------
+  function initDynamicProductsPosts() {
+    const container = document.querySelector('[data-dynamic-products]');
+    if (!container) return;
+
+
+    // Only render if empty to avoid breaking existing static HTML.
+    const products = [
+      { img: 'Assets/img/product1.png', alt: 'SMALL SPRAY', title: 'SMALL SPRAY', price: 'R100' },
+      { img: 'Assets/img/product2.png', alt: 'TALL SPRAY', title: 'TALL SPRAY', price: 'R150' },
+      { img: 'Assets/img/product3.jpeg', alt: 'POMADE', title: 'POMADE', price: 'R80' },
+      { img: 'Assets/img/hoodie1.png', alt: 'COMING SOON', title: 'COMING SOON', price: 'R__._' },
+      { img: 'Assets/img/shirt.png', alt: 'COMING SOON', title: 'COMING SOON', price: 'R__._' },
+    ];
+
+    const buildCard = (p) => {
+      const card = document.createElement('div');
+      card.className = 'card-products-service';
+
+      const img = document.createElement('img');
+      img.src = p.img;
+      img.alt = p.alt;
+      card.appendChild(img);
+
+      const content = document.createElement('div');
+      content.className = 'card-content-products-service';
+
+      const titleRow = document.createElement('div');
+      titleRow.className = 'title-row-service';
+
+      const title = document.createElement('div');
+      title.className = 'title-service';
+      title.textContent = p.title;
+
+      titleRow.appendChild(title);
+      content.appendChild(titleRow);
+
+      const price = document.createElement('div');
+      price.className = 'price-service';
+      price.textContent = p.price;
+      content.appendChild(price);
+
+      card.appendChild(content);
+      return card;
+    };
+
+    renderCardsFromData({
+      container,
+      data: products,
+      buildCard,
+      emptyPolicy: 'onlyEmpty',
+    });
+  }
+
+
   function initLightbox() {
     const lightbox = document.querySelector('.ttall-lightbox');
     if (!lightbox) return;
