@@ -467,3 +467,76 @@
   });
 })();
 
+
+// MAP
+(function () {
+    // Lebowakgomo coordinates from existing Google Maps URL in this file
+    const stores = [
+      {
+        id: 'lebowakgomo',
+        name: 'Lebowakgomo',
+        lat: -24.3145867,
+        lng: 29.4792675,
+        address: '24 BA, Dihlabakela st, Lebowakgomo, 0737, South Africa',
+        googleMapsUrl:
+          "https://www.google.com/maps/place/Deni+Dee%E2%80%99s+Shisanyama/" +
+          "@-24.3145867,29.3268322,26997m/data=!3m1!1e3!4m10!1m2!2m1!1s24+BA,+Dihlabakela+st,+Lebowakgomo,+0737,South+Africa!3m6!1s0x1ec127d8a9357dd7:0x4a94b0fe6dede002!8m2!3d-24.3145867!4d29.4792675!15sCjUyNCBCQSwgRGlobGFiYWtlbGEgc3QsIExlYm93YWtnb21vLCAwNzM3LFNvdXRoIEFmcmljYVo0IjIyNCBiYSBkaWhsYWJha2VsYSBzdCBsZWJvd2FrZ29tbyAwNzM3IHNvdXRoIGFmcmljYZIBCnJlc3RhdXJhbnSaASNDaFpEU1VoTk1HOW5TMFZKUTBGblNVUktMVzlRUldWUklkVBReABAPoBBAgAEDU!16s%2Fg%2F11rcdkyr99?entry=ttu&g_ep=EgoyMDI2MDUyMC4wIKXMDSoASAFQAw%3D%3D"
+      }
+    ];
+
+    function init() {
+      const mapEl = document.getElementById('store-map');
+      if (!mapEl || !window.L) return;
+
+      // South Africa / Limpopo region
+      const map = L.map('store-map', { scrollWheelZoom: true }).setView(
+        [-24.3145867, 29.4792675],
+        13
+      );
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; OpenStreetMap contributors'
+      }).addTo(map);
+
+      const bounds = [];
+
+      stores.forEach((s) => {
+        const marker = L.marker([s.lat, s.lng]).addTo(map);
+
+        const popupHtml = `
+          <div style="font-family: Poppins, sans-serif;">
+            <h3 style="margin:0 0 6px; font-size:16px; color:#000;">${s.name}</h3>
+            <div style="font-size:13px; color:#333; line-height:1.3;">${s.address}</div>
+            <div style="margin-top:10px;">
+              <a target="_blank" rel="noopener" href="${s.googleMapsUrl}" style="color:#0b57d0; font-weight:600;">Open in Google Maps</a>
+            </div>
+          </div>
+        `;
+
+        marker.bindPopup(popupHtml);
+        bounds.push([s.lat, s.lng]);
+
+        // Optional: clicking the existing card (by title text) pans to marker
+        const card = Array.from(document.querySelectorAll('.card-about'))
+          .find((c) => (c.querySelector('h2')?.textContent || '').trim() === s.name);
+        if (card) {
+          card.style.cursor = 'pointer';
+          card.addEventListener('click', () => {
+            map.setView([s.lat, s.lng], 14, { animate: true });
+            marker.openPopup();
+          });
+        }
+      });
+
+      if (bounds.length) {
+        map.fitBounds(bounds, { padding: [20, 20] });
+      }
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+  })();

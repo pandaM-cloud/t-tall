@@ -982,7 +982,47 @@ button a {
 
 
 
-/* about */
+/* about Map*/
+.map-section-about{
+  margin: 40px 0 20px;
+  padding: 0 20px;
+  width: 100%;
+  box-sizing: border-box;
+  color: #fff;
+  background: #000;
+}
+
+
+.map-section-about h2{
+  margin-bottom: 8px;
+  font-size: 28px;
+}
+
+.map-hint-about{
+  margin-bottom: 12px;
+  font-size: 14px;
+  color: #bdbdbd;
+}
+
+#store-map{
+  width: 100%;
+  height: 420px;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+}
+
+@media (max-width: 768px){
+  #store-map{ height: 320px; }
+}
+
+/* Leaflet default tweaks to match dark page */
+.leaflet-control-attribution{ background: rgba(0, 0, 0, 0.8); }
+.leaflet-popup-content{ font-family: Poppins, sans-serif; color: #fff; }
+.leaflet-popup-tip{ background: #000; }
+.leaflet-popup-content-wrapper{ background: #000; color: #fff; }
+
+
 .About-whole{
   margin: 0px;
   padding: 0px;
@@ -995,7 +1035,7 @@ button a {
 .border-about{
    border: 1px solid rgb(255, 255, 255);
    display: relative;
-    background: rgba(117, 117, 117, 0.1);
+    background: rgba(0, 0, 0, 0.551);
     color: rgb(255, 255, 255);
     padding: 5px 0px;
     border-radius: 50px;
@@ -2010,3 +2050,9 @@ button a {
 .footerb-bottom--equiry{
   color: white;
 }
+
+
+
+
+
+
