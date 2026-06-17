@@ -28,16 +28,58 @@
       </div>
     </header>
 
+    <!-- Services (visible) -->
+    <section class="services-preview-equiry" aria-label="Services">
+      <div class="services-preview-inner">
+        <h2 class="services-preview-title">Choose a service</h2>
+        <p class="services-preview-subtitle">Select what you need and we’ll tailor your enquiry.</p>
+
+        <div class="services-cards-grid" role="list">
+          <button type="button" class="service-card-equiry" data-service="haircut" aria-pressed="false">
+            <span class="service-card-title">Haircut</span>
+            <span class="service-card-meta">Clean & sharp</span>
+          </button>
+          <button type="button" class="service-card-equiry" data-service="fade" aria-pressed="false">
+            <span class="service-card-title">Fade</span>
+            <span class="service-card-meta">Blend perfection</span>
+          </button>
+          <button type="button" class="service-card-equiry" data-service="dye" aria-pressed="false">
+            <span class="service-card-title">Dye / Colour</span>
+            <span class="service-card-meta">Fresh new look</span>
+          </button>
+          <button type="button" class="service-card-equiry" data-service="beard" aria-pressed="false">
+            <span class="service-card-title">Beard / Line-up</span>
+            <span class="service-card-meta">Precision styling</span>
+          </button>
+          <button type="button" class="service-card-equiry" data-service="housecall" aria-pressed="false">
+            <span class="service-card-title">House Call</span>
+            <span class="service-card-meta">On-site booking</span>
+          </button>
+          <button type="button" class="service-card-equiry" data-service="other" aria-pressed="false">
+            <span class="service-card-title">Other</span>
+            <span class="service-card-meta">Tell us more</span>
+          </button>
+        </div>
+
+        <!-- Hidden fallback: still using existing select in the form -->
+      </div>
+    </section>
+
     <!-- Form -->
-<center>
-    <section class="form-container-equiry" aria-label="Enquiry form" style="margin-top:220px;">
+    <center>
+      <section class="form-container-equiry" aria-label="Enquiry form">
 
-      <h2 style="margin:0; font-size:22px; color:#fff;">Send us an enquiry</h2>
-      <p style="margin:0; color:#bdbdbd; font-size:13px;">
-        We’ll get back to you as soon as possible.
-      </p>
 
-      <form class="form-equiry" action="#" method="post">
+        <div class="form-top-spacer" aria-hidden="true"></div>
+
+
+        <h2 style="margin:0; font-size:22px; color:#fff;">Send us an enquiry</h2>
+        <p style="margin:0; color:#bdbdbd; font-size:13px;">
+          We’ll get back to you as soon as possible.
+        </p>
+
+        <form class="form-equiry" action="#" method="post">
+
         <div class="form-group-equiry">
           <label for="fullName">Full name</label>
           <input id="fullName" name="fullName" type="text" placeholder="Your name" required minlength="2" />
@@ -67,6 +109,42 @@
           </select>
         </div>
 
+        <script>
+          (function () {
+            const cards = document.querySelectorAll('.service-card-equiry');
+            const select = document.getElementById('service');
+
+            function setSelected(service) {
+              if (!service) return;
+
+              // update UI
+              cards.forEach((btn) => {
+                const pressed = btn.getAttribute('data-service') === service;
+                btn.setAttribute('aria-pressed', String(pressed));
+                btn.classList.toggle('is-selected', pressed);
+              });
+
+              // update form select value
+              const option = select.querySelector('option[value="' + service + '"]');
+              if (option) {
+                select.value = service;
+              }
+            }
+
+            cards.forEach((btn) => {
+              btn.addEventListener('click', () => {
+                setSelected(btn.getAttribute('data-service'));
+              });
+            });
+
+            // If user changes via other means, keep selected card in sync.
+            if (select) {
+              select.addEventListener('change', () => setSelected(select.value));
+            }
+          })();
+        </script>
+
+
         <div class="form-group-equiry">
           <label for="message">Message</label>
           <textarea id="message" name="message" placeholder="Tell us about your enquiry..." required minlength="10"></textarea>
@@ -83,11 +161,11 @@
 
 
     <div class="barber-media-equiry">
-      <i class="fa-brands fa-whatsapp" style="color: rgb(255, 255, 255);"><a href="https://wa.me/27796316135"></a></i></br>
-      <i class="fa-solid fa-phone"><a href="https://wa.me/27796316135"> </a></i>
-      <i class="fa-brands fa-tiktok"><a href="https://www.tiktok.com/@ttall_haircutss_rsa?_r=1&_t=ZS-95e6uFXXb5U"></a></i><br>
-      <i class="fa-brands fa-facebook-f"><a href="https://www.facebook.com/share/1biPkPqtfv/"></a></i><br>
-      <i class="fa-brands fa-instagram"><a href="https://www.instagram.com/t_tall_haircuts_rsa?igsh=NGIzNXk1amJyM3Mw"> </a></i><br>
+      <i class="fa-brands fa-whatsapp"><a href="https://wa.me/27796316135" aria-label="WhatsApp"></a></i>
+      <i class="fa-solid fa-phone"><a href="tel:+27796316135" aria-label="Phone"></a></i>
+      <i class="fa-brands fa-tiktok"><a href="https://www.tiktok.com/@ttall_haircutss_rsa?_r=1&_t=ZS-95e6uFXXb5U" aria-label="TikTok"></a></i>
+      <i class="fa-brands fa-facebook-f"><a href="https://www.facebook.com/share/1biPkPqtfv/" aria-label="Facebook"></a></i>
+      <i class="fa-brands fa-instagram"><a href="https://www.instagram.com/t_tall_haircuts_rsa?igsh=NGIzNXk1amJyM3Mw" aria-label="Instagram"></a></i>
     </div>
 
     <div class="barber-number-equiry">

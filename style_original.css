@@ -2027,8 +2027,10 @@ button a {
   gap: 8px;
   margin-top: 8px;
   cursor: pointer;
-  border-radius: 6px;
+  border-radius: 10px;
+  transition: 0.25s ease;
 }
+
 
 .form-container-equiry .form-submit-btn-equiry:hover {
   background-color: #fff;

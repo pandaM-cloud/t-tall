@@ -38,7 +38,7 @@ The website is built using **HTML** and **CSS**, with images/media stored in the
 - **Contact:** `contact.html`
 
 ## Changelog
-- **v1.0 (Part 2):**
+- **v1.0:**
   - Initial multi-page structure added/updated:
     - `index.html`, `services.html`, `about.html`, `Enquiry.html`, `contact.html`
   - Shared styling applied via `style_original.css`
