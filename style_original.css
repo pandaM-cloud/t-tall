@@ -2057,4 +2057,116 @@ button a {
 
 
 
+/* =========================
+   Global realistic text + UI animations
+   (added for better performance; JS handles scroll reveal)
+   ========================= */
+
+/* Smooth hover micro-interactions */
+.glow-on-hover,
+.card,
+.card-about,
+.card-price,
+.card-products-service,
+.review-card {
+  will-change: transform, box-shadow;
+}
+
+.glow-on-hover:hover,
+.card:hover,
+.card-about:hover,
+.card-price:hover,
+.card-products-service:hover,
+.review-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.25);
+}
+
+/* Shimmer/shine helpers */
+@keyframes ttallShine {
+  0% { transform: translateX(-120%) skewX(-20deg); opacity: 0; }
+  20% { opacity: 1; }
+  100% { transform: translateX(120%) skewX(-20deg); opacity: 0; }
+}
+
+.ttall-shine {
+  position: relative;
+  overflow: hidden;
+}
+
+.ttall-shine::after {
+  content: '';
+  position: absolute;
+  top: -30%;
+  left: -40%;
+  width: 60%;
+  height: 160%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.45),
+    transparent
+  );
+  transform: translateX(-120%) skewX(-20deg);
+  pointer-events: none;
+}
+
+.ttall-shine:hover::after {
+  animation: ttallShine 900ms ease;
+}
+
+/* Text reveal animations (letter-by-letter is driven by JS by toggling class on container) */
+@keyframes ttallTextLiftFade {
+  from { opacity: 0; transform: translateY(14px); filter: blur(6px); }
+  to { opacity: 1; transform: translateY(0); filter: blur(0); }
+}
+
+@keyframes ttallLetterReveal {
+  0% { opacity: 0; transform: translateY(10px) scale(0.98); filter: blur(6px); }
+  60% { opacity: 1; }
+  100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+}
+
+@keyframes ttallGlowPulse {
+  0%, 100% { box-shadow: 0 0 0 rgba(255,255,255,0); }
+  50% { box-shadow: 0 0 20px rgba(255,255,255,0.25); }
+}
+
+/* Container that JS will reveal on scroll */
+.ttall-text-reveal {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: none;
+}
+
+/* JS adds .is-revealed to start the animation */
+.ttall-text-reveal.is-revealed {
+  opacity: 1;
+  transform: none;
+}
+
+/* When letters are wrapped, each letter animates with delay using inline style in JS */
+.ttall-letter {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(10px);
+  filter: blur(6px);
+}
+
+.ttall-text-reveal.is-revealed .ttall-letter {
+  animation: ttallLetterReveal 520ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+/* Fallback for users that prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .ttall-text-reveal { opacity: 1 !important; transform: none !important; }
+  .ttall-letter { opacity: 1 !important; transform: none !important; filter: none !important; animation: none !important; }
+  .ttall-shine:hover::after { animation: none !important; }
+}
+
+
+
+
+
+
 

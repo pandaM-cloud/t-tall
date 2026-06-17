@@ -346,6 +346,118 @@
     });
   }
 
+  // -------------------- Global text animations --------------------
+  function isMeaningfulText(node) {
+    if (!node) return false;
+    const txt = (node.textContent || '').replace(/\s+/g, ' ').trim();
+    if (!txt) return false;
+    // skip if it is basically only punctuation
+    if (/^[\W_]+$/u.test(txt)) return false;
+    return true;
+  }
+
+  function splitTextIntoLetters(el) {
+    if (!el || !isMeaningfulText(el)) return;
+    if (el.dataset.ttallLetterSplit === '1') return;
+
+    // Skip if already contains our wrapped spans
+    if (el.querySelector('.ttall-letter')) return;
+
+    const raw = el.textContent || '';
+    // Keep spaces as normal text nodes -> convert to non-breaking spaces for layout stability
+    const chars = Array.from(raw);
+
+    const frag = document.createDocumentFragment();
+    chars.forEach((ch) => {
+      if (ch === ' ') {
+        frag.appendChild(document.createTextNode('\u00A0'));
+        return;
+      }
+      const span = document.createElement('span');
+      span.className = 'ttall-letter';
+      span.textContent = ch;
+      frag.appendChild(span);
+    });
+
+    // Wrap container class and replace text
+    el.classList.add('ttall-text-reveal');
+    el.textContent = '';
+    el.appendChild(frag);
+
+    el.dataset.ttallLetterSplit = '1';
+  }
+
+  function initGlobalTextReveal() {
+    const reduced = prefersReducedMotion;
+
+    const candidates = [
+      'h1', 'h2', 'h3', 'p',
+      '.price-price',
+      '.f1-about',
+      '.last-rev',
+      '.end-message-service',
+      '.services-preview-title',
+      '.services-preview-subtitle',
+      '.banner',
+      '.black-end',
+      '.quote',
+    ];
+
+    const nodes = [];
+    candidates.forEach((sel) => {
+      $all(sel).forEach((n) => nodes.push(n));
+    });
+
+    // De-dup
+    const seen = new Set();
+    const uniq = nodes.filter((n) => {
+      if (!n || seen.has(n)) return false;
+      seen.add(n);
+      return true;
+    });
+
+    if (!uniq.length) return;
+
+    uniq.forEach((el) => {
+      splitTextIntoLetters(el);
+    });
+
+    const revealEls = $all('.ttall-text-reveal');
+    if (!revealEls.length) return;
+
+    if (reduced || !('IntersectionObserver' in window)) {
+      revealEls.forEach((el) => {
+        el.classList.add('is-revealed');
+        const letters = $all('.ttall-letter', el);
+        letters.forEach((letter, idx) => {
+          letter.style.animationDelay = `${Math.min(idx * 12, 800)}ms`;
+        });
+      });
+      return;
+    }
+
+    const obs = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          const el = entry.target;
+          el.classList.add('is-revealed');
+
+          const letters = $all('.ttall-letter', el);
+          letters.forEach((letter, idx) => {
+            // Stagger reveal with a capped delay for performance
+            letter.style.animationDelay = `${Math.min(idx * 12, 800)}ms`;
+          });
+
+          obs.unobserve(el);
+        });
+      },
+      { threshold: 0.15 }
+    );
+
+    revealEls.forEach((el) => obs.observe(el));
+  }
+
   document.addEventListener('DOMContentLoaded', () => {
     initScrollToTop();
     initReveal();
@@ -356,9 +468,13 @@
 
     // Enquiry page form UI
     initEnquiryForm();
+
+    // Global text animations across pages
+    initGlobalTextReveal();
   });
 
 })();
+
 
 // T-tall Stores page enhancements (about.html)
 // Single-file JS module: keep in sync with DOM classes in about.html.
