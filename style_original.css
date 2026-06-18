@@ -9,7 +9,10 @@ body {
     background: linear-gradient(to right, #ffffff, #ffffff);
     line-height: 1.6;
     overflow-x: hidden;
+    max-width: 100%;
 }
+
+
 
 
                                 /* main page */
@@ -141,13 +144,17 @@ body {
 }
 
 .slider-end {
-  margin: 160px 450px;
+  margin: 160px auto 0;
   position: absolute;
-  width: 75%;
+  width: min(75%, 980px);
+  left: 50%;
+  transform: translateX(-50%);
   height: var(--height);
   overflow: hidden;
   mask-image: linear-gradient(to right, transparent, #000000 20% 60%, transparent);
+  max-width: 100%;
 }
+
 
 .slider-end .list-end {
   display: flex;
@@ -209,8 +216,10 @@ body {
   font-size: 15px;
   text-align: left;
   justify-content: left;
-  margin: 200px 0px -150px -200px;
+  margin: 200px 0 -150px 0;
+  padding: 0 12px;
 }
+
 
         /*page 2*/
 /*intro message*/
@@ -226,11 +235,12 @@ body {
 
 .price-price{
   color: #000000;
-  font-size: 100px;
+  font-size: clamp(2rem, 8vw, 5.5rem);
   font-weight: bold;
   text-align: center;
   justify-content: left;
 }
+
 
 .list-item {
       font-size: 25px;
@@ -1723,7 +1733,20 @@ button a {
     max-width: 320px;
     width: 100%;
   }
+
+  /* navigation gaps: avoid overflow on small screens */
+  .border ul,
+  .border-about ul,
+  .border-service ul,
+  .border-contact ul,
+  .border-equiry ul {
+    gap: 16px;
+  }
+
+  /* prevent any accidental wide components */
+  .card-end { width: 100%; }
 }
+
 
 
 .barber-number-contact {
@@ -1910,6 +1933,7 @@ button a {
     padding: 14px 16px;
   }
 
+  /* price heading already uses clamp() globally */
   .price-price {
     font-size: clamp(2rem, 10vw, 3rem);
   }
@@ -1917,6 +1941,7 @@ button a {
   .hero {
     min-height: 480px;
   }
+
 
   .hero-overlay {
     padding: 20px 12px;

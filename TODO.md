@@ -1,14 +1,17 @@
-# TODO - On-Page SEO URL structure (clean slugs)
+## Mobile-friendly website task (T-tall Haircuts)
 
-- [x] Inspect existing pages and navigation targets
-- [x] Create slug-based page folders and new `index.html` files:
-  - [x] `/stores/` from `about.html`
-  - [x] `/services/` from `services.html`
-  - [x] `/become-a-barber/` from `contact.html`
-  - [x] `/enquiry/` from `Enquiry.html`
-  - [x] Keep `/` as existing `index.html`
-- [x] Update all navigation `<a href="...">` in the new pages to use slug paths
-- [x] Update internal links (CSS/JS/assets relative paths) for nested pages
-- [x] (Optional but enabled) Update old `.html` pages navigation links to point to slug URLs
-- [ ] Sanity check by opening the new URLs and verifying navigation works
+- [x] Review and update `style_original.css` for mobile safety (layout/spacing/typography/nav)
+
+- [x] Fix hard-coded desktop margins that push content off-screen (slider, quote)
+
+- [x] Make `.price-price` responsive using `clamp()` on small screens
+
+- [x] Adjust navigation gaps/wrapping for small screens
+
+- [x] Ensure 2-column sections stack under 768px
+
+- [x] Add global overflow protection rules (prevent horizontal overflow)
+
+- [x] Quick manual test checklist for key pages on mobile widths
+
 
