@@ -1,0 +1,25 @@
+User-agent: *
+
+# Allow indexing of main pages and section pages
+Allow: /
+Allow: /index.html
+Allow: /services/
+Allow: /services/index.html
+Allow: /stores/
+Allow: /stores/index.html
+Allow: /become-a-barber/
+Allow: /become-a-barber/index.html
+Allow: /enquiry/
+Allow: /enquiry/index.html
+Allow: /contact.html
+Allow: /about.html
+Allow: /services.html
+
+# Block common directories/files that should not be crawled
+Disallow: /Assets/
+Disallow: /assets/
+Disallow: /Js/
+
+# Block query-string pages (if any are added later)
+Disallow: /*?
+
