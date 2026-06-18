@@ -1,0 +1,54 @@
+Security measures to protect this website (client-side + server-side checklist)
+
+1) Keep dependencies updated
+- Update Font Awesome CDN version regularly.
+- Remove unused libraries and always use HTTPS.
+
+2) Content Security Policy (CSP)
+- Add a CSP meta tag or, preferably, server headers.
+- If you host the site on a static server, configure headers like:
+  Content-Security-Policy:
+    default-src 'self';
+    script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; 
+    style-src  'self' https://cdnjs.cloudflare.com 'unsafe-inline';
+    img-src 'self' data: https:;
+    font-src 'self' https://cdnjs.cloudflare.com;
+    object-src 'none';
+    base-uri 'self';
+    frame-ancestors 'none';
+    upgrade-insecure-requests;
+
+3) Strict transport security (HSTS)
+- Server header:
+  Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+
+4) Prevent MIME sniffing and clickjacking
+- Server headers:
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+
+5) Permissions policy
+- Server header example:
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
+
+6) Reduce XSS risk (important)
+- In any JS rendering, never assign untrusted data with innerHTML.
+- In your current app.js, ensure dynamic text is set via textContent.
+- Where you must use innerHTML (templates), sanitize input.
+
+7) Form hardening (enquiry)
+- Add client-side validation (already present) AND server-side validation (if/when you add a backend).
+- Protect against CSRF if you introduce cookies-based sessions.
+
+8) Rate limiting + bot protection
+- If you add backend endpoints for enquiries, apply rate limiting.
+
+9) Error handling
+- Do not expose stack traces in production.
+- Log errors server-side only.
+
+10) Accessibility/security
+- Set rel="noopener noreferrer" on all target="_blank" links (already done in your map popup).
+
+Next step
+- If you tell me what hosting method you use (Netlify, GitHub Pages, Apache, Nginx, Windows IIS, etc.), I can generate the exact config for headers and CSP.
