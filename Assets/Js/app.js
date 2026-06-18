@@ -776,6 +776,141 @@
     });
   }
 
+  function initSearchAndSort() {
+    // Generic filtering + sorting for card grids
+    const parsePriceFromText = (txt) => {
+      if (!txt) return null;
+      // Examples: "R150", "R__._" -> null for invalid
+      const m = String(txt).match(/R\s*([0-9]+(?:\.[0-9]+)?)/i);
+      if (!m) return null;
+      const n = Number(m[1]);
+      return Number.isFinite(n) ? n : null;
+    };
+
+    const normalize = (s) => String(s || '').toLowerCase().trim();
+
+    const buildSearchItems = ({ container, getTitleEl, getPriceEl }) => {
+      // Only consider direct card children to avoid mixing in UI elements
+      const cards = $all(':scope > div', container);
+      return cards
+        .map((card) => {
+          const titleText = getTitleEl(card)?.innerText || '';
+          const priceText = getPriceEl(card)?.innerText || '';
+          const priceNum = parsePriceFromText(priceText);
+          const haystack = normalize(titleText);
+          return { card, titleText, priceText, priceNum, haystack };
+        });
+    };
+
+    const apply = ({ items, q, sort }) => {
+      const query = normalize(q);
+
+      let filtered = items;
+      if (query) {
+        filtered = items.filter((it) => it.haystack.includes(query) || normalize(it.priceText).includes(query));
+      }
+
+      const withIndex = filtered.map((it, idx) => ({ it, idx }));
+
+      const byTitle = (a, b) => a.titleText.localeCompare(b.titleText, undefined, { sensitivity: 'base' });
+      const byPrice = (a, b) => {
+        const ap = a.priceNum;
+        const bp = b.priceNum;
+        if (ap === null && bp === null) return 0;
+        if (ap === null) return 1;
+        if (bp === null) return -1;
+        return ap - bp;
+      };
+
+      if (sort === 'price-asc') {
+        withIndex.sort((x, y) => byPrice(x.it, y.it) || (x.idx - y.idx));
+      } else if (sort === 'price-desc') {
+        withIndex.sort((x, y) => -byPrice(x.it, y.it) || (x.idx - y.idx));
+      } else if (sort === 'title-asc') {
+        withIndex.sort((x, y) => byTitle(x.it, y.it) || (x.idx - y.idx));
+      } else if (sort === 'title-desc') {
+        withIndex.sort((x, y) => -byTitle(x.it, y.it) || (x.idx - y.idx));
+      } else {
+        // relevance: keep filtered order
+        withIndex.sort((x, y) => x.idx - y.idx);
+      }
+
+      const cardsToShow = new Set(withIndex.map((x) => x.it.card));
+
+      items.forEach((it) => {
+        it.card.style.display = cardsToShow.has(it.card) ? '' : 'none';
+      });
+
+      // Re-append in sorted order (preserves layout after filtering)
+      const frag = document.createDocumentFragment();
+      withIndex.forEach(({ it }) => frag.appendChild(it.card));
+      containerEl.appendChild(frag);
+    };
+
+    const initOne = ({ uiRoot, containerEl, getTitleEl, getPriceEl }) => {
+      if (!uiRoot || !containerEl) return;
+
+      const input = uiRoot.querySelector('[data-ttall-search-input]');
+      const select = uiRoot.querySelector('[data-ttall-sort-select]');
+      if (!input || !select) return;
+
+      const items = [];
+
+      const collect = () => {
+        // rebuild to include dynamically rendered cards (services are dynamic)
+        items.length = 0;
+        const built = buildSearchItems({ container: containerEl, getTitleEl, getPriceEl });
+        items.push(...built);
+      };
+
+      const run = () => {
+        collect();
+        const sort = select.value;
+        apply({ items, q: input.value, sort });
+      };
+
+      let t = null;
+      input.addEventListener('input', () => {
+        window.clearTimeout(t);
+        t = window.setTimeout(run, 80);
+      });
+      select.addEventListener('change', run);
+
+      // first run
+      run();
+
+      // observe container changes for dynamic services cards
+      if ('MutationObserver' in window) {
+        const mo = new MutationObserver(() => run());
+        mo.observe(containerEl, { childList: true, subtree: false });
+      }
+    };
+
+    // services (index.html)
+    const servicesUi = document.querySelector('[data-search-services-ui]');
+    const servicesContainerEl = document.querySelector('.container-price');
+    if (servicesUi && servicesContainerEl) {
+      initOne({
+        uiRoot: servicesUi,
+        containerEl: servicesContainerEl,
+        getTitleEl: (card) => card.querySelector('.Turf-price, .badge-price'),
+        getPriceEl: (card) => card.querySelector('.badge-price'),
+      });
+    }
+
+    // products (services.html)
+    const productsUi = document.querySelector('[data-search-products-ui]');
+    const productsContainerEl = document.querySelector('.container-products-service');
+    if (productsUi && productsContainerEl) {
+      initOne({
+        uiRoot: productsUi,
+        containerEl: productsContainerEl,
+        getTitleEl: (card) => card.querySelector('.title-service'),
+        getPriceEl: (card) => card.querySelector('.price-service'),
+      });
+    }
+  }
+
   domReady(() => {
     initScrollToTop();
     initReveal();
@@ -793,6 +928,9 @@
     // Dynamic DOM rendering (reviews + services)
     initDynamicReviews();
     initDynamicServicesPriceList();
+
+    // Search + sort UI
+    initSearchAndSort();
 
     // Global text animations across pages
     initGlobalTextReveal();

@@ -2277,3 +2277,52 @@ button a {
 @keyframes slide-in {
    from { translate: 100vw; }
 }
+
+/* Search bars (services/products) */
+.ttall-searchbar{
+  width: min(980px, 92vw);
+  margin: 10px auto 22px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: rgba(255,255,255,0.6);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+  color: #000;
+}
+
+.ttall-searchbar input[type="search"]{
+  flex: 1;
+  min-width: 200px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(0,0,0,0.15);
+  outline: none;
+  font-family: inherit;
+}
+
+.ttall-searchbar select{
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(0,0,0,0.15);
+  outline: none;
+  font-family: inherit;
+}
+
+.ttall-searchbar input[type="search"]:focus,
+.ttall-searchbar select:focus{
+  border-color: rgba(0,0,0,0.35);
+  box-shadow: 0 0 0 4px rgba(0,0,0,0.08);
+}
+
+@media (max-width: 768px){
+  .ttall-searchbar{
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .ttall-searchbar input[type="search"],
+  .ttall-searchbar select{ width: 100%; }
+}
