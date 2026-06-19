@@ -105,12 +105,13 @@
   <h2 style="color:#fff; margin:0 0 10px;">Send a message to our team</h2>
   <p style="color:#bdbdbd; margin:0 0 18px; font-size:13px;">Complete the form below and we’ll compile your message into an email.</p>
 
-  <form id="ttallContactForm" action="#" method="post" novalidate>
+      <form id="ttallContactForm" action="#" method="post" novalidate>
     <div style="display:grid; grid-template-columns:1fr; gap:12px;">
       <div class="form-group-equiry">
         <label for="contactName" style="color:#fff;">Full name</label>
-        <input id="contactName" name="contactName" type="text" required minlength="2" placeholder="Your name" style="width:100%; padding:12px 16px; border-radius:8px; color:#fff; background:transparent; border:1px solid #414141; font-family:inherit;" />
+        <input id="contactName" name="contactName" type="text" required minlength="2" maxlength="80" placeholder="Your name" style="width:100%; padding:12px 16px; border-radius:8px; color:#fff; background:transparent; border:1px solid #414141; font-family:inherit;" />
       </div>
+
 
       <div class="form-group-equiry">
         <label for="contactEmail" style="color:#fff;">Email</label>
@@ -119,7 +120,7 @@
 
       <div class="form-group-equiry">
         <label for="contactPhone" style="color:#fff;">Phone (optional)</label>
-        <input id="contactPhone" name="contactPhone" type="tel" placeholder="e.g. +27 79 631 6135" style="width:100%; padding:12px 16px; border-radius:8px; color:#fff; background:transparent; border:1px solid #414141; font-family:inherit;" />
+        <input id="contactPhone" name="contactPhone" type="tel" inputmode="tel" autocomplete="tel" placeholder="e.g. +27 79 631 6135" pattern="^\+?[0-9\s\-\(\)]{8,20}$" style="width:100%; padding:12px 16px; border-radius:8px; color:#fff; background:transparent; border:1px solid #414141; font-family:inherit;" />
       </div>
 
       <div class="form-group-equiry">
