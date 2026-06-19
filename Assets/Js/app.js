@@ -1063,27 +1063,37 @@
       }
     ];
 
-    function init() {
+  function init() {
       const mapEl = document.getElementById('store-map');
-      if (!mapEl || !window.L) return;
+      if (!mapEl) return;
 
-      // South Africa / Limpopo region
-      const map = L.map('store-map', { scrollWheelZoom: true }).setView(
-        [-24.3145867, 29.4792675],
-        13
-      );
+      // Retry a bit if Leaflet isn't ready yet (common when scripts load slowly)
+      if (!window.L) return false;
 
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-        attribution: '&copy; OpenStreetMap contributors'
-      }).addTo(map);
+      // Avoid double-init (Leaflet will error if called twice on same element)
+      if (mapEl.dataset.ttallMapInited === '1') return true;
 
-      const bounds = [];
+      try {
+        // South Africa / Limpopo region
+        const map = L.map('store-map', { scrollWheelZoom: true }).setView(
+          [-24.3145867, 29.4792675],
+          13
+        );
 
-      stores.forEach((s) => {
-        const marker = L.marker([s.lat, s.lng]).addTo(map);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          maxZoom: 19,
+          attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
 
-        const popupHtml = `
+        mapEl.dataset.ttallMapInited = '1';
+
+        // Markers/popup/bounds
+        const bounds = [];
+
+        stores.forEach((s) => {
+          const marker = L.marker([s.lat, s.lng]).addTo(map);
+
+          const popupHtml = `
           <div style="font-family: Poppins, sans-serif;">
             <h3 style="margin:0 0 6px; font-size:16px; color:#000;">${s.name}</h3>
             <div style="font-size:13px; color:#333; line-height:1.3;">${s.address}</div>
@@ -1091,31 +1101,57 @@
               <a target="_blank" rel="noopener" href="${s.googleMapsUrl}" style="color:#0b57d0; font-weight:600;">Open in Google Maps</a>
             </div>
           </div>
-        `;
+          `;
 
-        marker.bindPopup(popupHtml);
-        bounds.push([s.lat, s.lng]);
+          marker.bindPopup(popupHtml);
+          bounds.push([s.lat, s.lng]);
 
-        // Optional: clicking the existing card (by title text) pans to marker
-        const card = Array.from(document.querySelectorAll('.card-about'))
-          .find((c) => (c.querySelector('h2')?.textContent || '').trim() === s.name);
-        if (card) {
-          card.style.cursor = 'pointer';
-          card.addEventListener('click', () => {
-            map.setView([s.lat, s.lng], 14, { animate: true });
-            marker.openPopup();
-          });
+          const card = Array.from(document.querySelectorAll('.card-about'))
+            .find((c) => (c.querySelector('h2')?.textContent || '').trim() === s.name);
+          if (card) {
+            card.style.cursor = 'pointer';
+            card.addEventListener('click', () => {
+              map.setView([s.lat, s.lng], 14, { animate: true });
+              marker.openPopup();
+            });
+          }
+        });
+
+        if (bounds.length) {
+          map.fitBounds(bounds, { padding: [20, 20] });
         }
-      });
 
-      if (bounds.length) {
-        map.fitBounds(bounds, { padding: [20, 20] });
+        return true;
+      } catch (e) {
+        // If something fails (e.g., Leaflet partially ready), retry below.
+        // Keep mapEl.dataset.ttallMapInited untouched so retry can run.
+        return false;
       }
+
+
+
+
+
     }
 
+
+
+    // If Leaflet isn't ready yet, retry a few times
+    const maxAttempts = 10;
+    const intervalMs = 250;
+    let attempt = 0;
+
+    const tryInit = () => {
+      attempt += 1;
+      const ok = init();
+      if (ok) return;
+      if (attempt >= maxAttempts) return;
+      window.setTimeout(tryInit, intervalMs);
+    };
+
     if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', init);
+      document.addEventListener('DOMContentLoaded', tryInit);
     } else {
-      init();
+      tryInit();
     }
   })();

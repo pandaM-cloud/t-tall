@@ -131,8 +131,9 @@ body {
 .card-end {
   justify-content: space-between -30px;
   width: 110%;
-  height: 80%;
+  height: 50%;
   padding: 15px;
+  margin: 0px 50px 50px 0px;
   border-radius: 8px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
@@ -147,13 +148,14 @@ body {
   margin: 160px auto 0;
   position: absolute;
   width: min(75%, 980px);
-  left: 50%;
-  transform: translateX(-50%);
+  left: 10%;
+  transform: translateX(0);
   height: var(--height);
   overflow: hidden;
   mask-image: linear-gradient(to right, transparent, #000000 20% 60%, transparent);
   max-width: 100%;
 }
+
 
 
 .slider-end .list-end {
@@ -854,9 +856,10 @@ button a {
   }
 .pricelist-container{
       margin-left: 69px;
-      margin-top: 50px;
+      margin-top: 0;
       margin-bottom: 30px;
 }
+
 
 /* team */
 .team {
