@@ -100,7 +100,129 @@
 </footer>
 </div>
 
+<!-- Contact form added for general messages -->
+<section class="contact-form-wrap" aria-label="Contact form" style="padding:28px 16px; max-width:720px; margin:0 auto;">
+  <h2 style="color:#fff; margin:0 0 10px;">Send a message to our team</h2>
+  <p style="color:#bdbdbd; margin:0 0 18px; font-size:13px;">Complete the form below and we’ll compile your message into an email.</p>
+
+  <form id="ttallContactForm" action="#" method="post" novalidate>
+    <div style="display:grid; grid-template-columns:1fr; gap:12px;">
+      <div class="form-group-equiry">
+        <label for="contactName" style="color:#fff;">Full name</label>
+        <input id="contactName" name="contactName" type="text" required minlength="2" placeholder="Your name" style="width:100%; padding:12px 16px; border-radius:8px; color:#fff; background:transparent; border:1px solid #414141; font-family:inherit;" />
+      </div>
+
+      <div class="form-group-equiry">
+        <label for="contactEmail" style="color:#fff;">Email</label>
+        <input id="contactEmail" name="contactEmail" type="email" required placeholder="name@example.com" style="width:100%; padding:12px 16px; border-radius:8px; color:#fff; background:transparent; border:1px solid #414141; font-family:inherit;" />
+      </div>
+
+      <div class="form-group-equiry">
+        <label for="contactPhone" style="color:#fff;">Phone (optional)</label>
+        <input id="contactPhone" name="contactPhone" type="tel" placeholder="e.g. +27 79 631 6135" style="width:100%; padding:12px 16px; border-radius:8px; color:#fff; background:transparent; border:1px solid #414141; font-family:inherit;" />
+      </div>
+
+      <div class="form-group-equiry">
+        <label for="contactType" style="color:#fff;">Type of message</label>
+        <select id="contactType" name="contactType" required style="width:100%; padding:12px 16px; border-radius:8px; color:#fff; background:transparent; border:1px solid #414141; font-family:inherit;">
+          <option value="" disabled selected>Select a message type</option>
+          <option value="general">General message</option>
+          <option value="booking">Booking enquiry</option>
+          <option value="volunteer">Volunteer enquiry</option>
+          <option value="sponsor">Sponsor enquiry</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+
+      <div class="form-group-equiry">
+        <label for="contactMessage" style="color:#fff;">Full message</label>
+        <textarea id="contactMessage" name="contactMessage" required minlength="10" placeholder="Write your full message here..." style="width:100%; min-height:130px; padding:12px 16px; border-radius:8px; color:#fff; background:transparent; border:1px solid #414141; font-family:inherit;"></textarea>
+      </div>
+
+      <button type="submit" style="border:none; width:100%; padding:14px 16px; border-radius:10px; cursor:pointer; background:#fff; color:#000; font-weight:800;">
+        Send message
+      </button>
+
+      <div id="ttallContactFormResult" aria-live="polite" style="color:#bdbdbd; font-size:13px; min-height:18px;"></div>
+    </div>
+  </form>
+</section>
+
+<script>
+(function () {
+  const form = document.getElementById('ttallContactForm');
+  const resultEl = document.getElementById('ttallContactFormResult');
+  if (!form) return;
+
+  // Recipient defined in code
+  // NOTE: Replace with the actual recipient email for the organisation.
+  const RECIPIENT_EMAIL = '27796316135@gmail.com';
+
+  const setResult = (msg) => {
+    if (!resultEl) return;
+    resultEl.textContent = msg;
+  };
+
+
+  const validate = () => {
+    const name = form.querySelector('#contactName');
+    const email = form.querySelector('#contactEmail');
+    const type = form.querySelector('#contactType');
+    const message = form.querySelector('#contactMessage');
+
+    const nameOk = !!name && name.value.trim().length >= 2;
+    const emailOk = !!email && email.value.trim().length > 0 && email.checkValidity();
+    const typeOk = !!type && !!type.value;
+    const messageOk = !!message && message.value.trim().length >= 10;
+
+    return nameOk && emailOk && typeOk && messageOk;
+  };
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    if (!validate()) {
+      setResult('Please complete all required fields with valid information.');
+      return;
+    }
+
+    const fullName = form.querySelector('#contactName').value.trim();
+    const email = form.querySelector('#contactEmail').value.trim();
+    const phone = (form.querySelector('#contactPhone').value || '').trim();
+    const type = form.querySelector('#contactType').value;
+    const message = form.querySelector('#contactMessage').value.trim();
+
+    const typeLabel = {
+      general: 'General message',
+      booking: 'Booking enquiry',
+      volunteer: 'Volunteer enquiry',
+      sponsor: 'Sponsor enquiry',
+      other: 'Other',
+    }[type] || type;
+
+    const subject = `T-tall contact: ${typeLabel}`;
+
+    const body = [
+      `Name: ${fullName}`,
+      `Email: ${email}`,
+      `Phone: ${phone || 'N/A'}`,
+      `Message type: ${typeLabel}`,
+      '',
+      message,
+    ].join('\n');
+
+    const mailto = `mailto:${encodeURIComponent(RECIPIENT_EMAIL)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+
+    setResult('Opening your email client...');
+    window.location.href = mailto;
+
+    // optional: keep values; no reset to avoid losing user text
+  });
+})();
+</script>
+
 <script defer src="Assets/Js/app.js"></script>
 
 </body>
 </html>
+
