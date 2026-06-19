@@ -155,15 +155,10 @@
   const resultEl = document.getElementById('ttallContactFormResult');
   if (!form) return;
 
-  // Recipient defined in code
-  // NOTE: Replace with the actual recipient email for the organisation.
-  const RECIPIENT_EMAIL = '27796316135@gmail.com';
-
   const setResult = (msg) => {
     if (!resultEl) return;
     resultEl.textContent = msg;
   };
-
 
   const validate = () => {
     const name = form.querySelector('#contactName');
@@ -179,12 +174,10 @@
     return nameOk && emailOk && typeOk && messageOk;
   };
 
-  form.addEventListener('submit', (e) => {
-    // Validate with JavaScript before submission.
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
 
     if (!validate()) {
-      // Show an error message and highlight the first invalid field.
       const firstInvalid = form.querySelector(':invalid') || form.querySelector('[required]:invalid');
       if (firstInvalid) {
         if (typeof firstInvalid.focus === 'function') firstInvalid.focus();
@@ -196,52 +189,38 @@
       return;
     }
 
-
-    // Valid: allow normal POST to the action URL.
-    // After calling form.submit(), the page will navigate to the action endpoint.
-    if (typeof form.submit === 'function') {
-      form.submit();
-      return;
+    const submitBtn = form.querySelector('button[type="submit"]');
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.dataset.prevText = submitBtn.textContent;
+      submitBtn.textContent = 'Sending...';
     }
 
-    // If submit() is unavailable, fall back to mailto.
-    const fullName = form.querySelector('#contactName').value.trim();
-    const email = form.querySelector('#contactEmail').value.trim();
-    const phone = (form.querySelector('#contactPhone').value || '').trim();
-    const type = form.querySelector('#contactType').value;
-    const message = form.querySelector('#contactMessage').value.trim();
+    setResult('Sending your message...');
 
-    const typeLabel = {
+    try {
+      const actionUrl = form.getAttribute('action') || '/contact';
+      const formData = new FormData(form);
 
-      general: 'General message',
-      booking: 'Booking enquiry',
-      volunteer: 'Volunteer enquiry',
-      sponsor: 'Sponsor enquiry',
-      other: 'Other',
-    }[type] || type;
+      const res = await fetch(actionUrl, {
+        method: 'POST',
+        body: formData,
+      });
 
-    const subject = `T-tall contact: ${typeLabel}`;
+      if (!res.ok) {
+        throw new Error(`Request failed with status ${res.status}`);
+      }
 
-    const body = [
-      `Name: ${fullName}`,
-      `Email: ${email}`,
-      `Phone: ${phone || 'N/A'}`,
-      `Message type: ${typeLabel}`,
-      '',
-      message,
-    ].join('\n');
-
-    // Keep existing behaviour (mailto) only if you do not have a backend endpoint.
-    // If you do have a backend endpoint at action="/contact", you should remove the mailto block.
-
-    const mailto = `mailto:${encodeURIComponent(RECIPIENT_EMAIL)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-
-    setResult('Opening your email client...');
-    window.location.href = mailto;
-
-    // optional: keep values; no reset to avoid losing user text
-
-
+      setResult('Message sent successfully. Thank you!');
+      form.reset();
+    } catch (err) {
+      setResult('Something went wrong while sending. Please try again.');
+    } finally {
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        if (submitBtn.dataset.prevText) submitBtn.textContent = submitBtn.dataset.prevText;
+      }
+    }
   });
 })();
 </script>

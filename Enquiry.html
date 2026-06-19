@@ -329,7 +329,7 @@
             },
           };
 
-          form.addEventListener('submit', function (e) {
+          form.addEventListener('submit', async function (e) {
             e.preventDefault();
 
             // Validate with JavaScript before submission.
@@ -362,7 +362,32 @@
             const fallback = { title: 'Enquiry received', body: 'We’ll review your message and respond with cost, availability, or next steps based on your storyline.' };
             const res = item || fallback;
 
+            // AJAX submit (async). If the backend returns HTML/JSON, we don't rely on it here.
+            const submitBtn = form.querySelector('button[type="submit"], .form-submit-btn-equiry');
+            if (submitBtn) {
+              submitBtn.disabled = true;
+              submitBtn.dataset.prevText = submitBtn.textContent;
+              submitBtn.textContent = 'Sending...';
+            }
+
+            const actionUrl = form.getAttribute('action') || 'enquiry/index.html';
+            const formData = new FormData(form);
+
+            // Always show the friendly response immediately (better UX), but still send in background.
             showResponse(res.title, res.body);
+
+            (async () => {
+              try {
+                await fetch(actionUrl, { method: 'POST', body: formData, headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+              } catch (_) {
+                // ignore; user already got confirmation UI
+              } finally {
+                if (submitBtn) {
+                  submitBtn.disabled = false;
+                  if (submitBtn.dataset.prevText) submitBtn.textContent = submitBtn.dataset.prevText;
+                }
+              }
+            })();
           });
         })();
       </script>
