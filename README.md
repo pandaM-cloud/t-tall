@@ -50,7 +50,6 @@ User experience enhancements include:
 - **Contact:** `contact.html`
 
 ## Changelog
-- **v1.0:**
   - Initial multi-page structure added/updated:
     - `index.html`, `services.html`, `about.html`, `Enquiry.html`, `contact.html`
   - Shared styling applied via `style_original.css`
