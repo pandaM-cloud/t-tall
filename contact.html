@@ -180,6 +180,7 @@
   };
 
   form.addEventListener('submit', (e) => {
+    // Validate with JavaScript before submission.
     e.preventDefault();
 
     if (!validate()) {
@@ -187,6 +188,14 @@
       return;
     }
 
+    // Valid: allow normal POST to the action URL.
+    // After calling form.submit(), the page will navigate to the action endpoint.
+    if (typeof form.submit === 'function') {
+      form.submit();
+      return;
+    }
+
+    // If submit() is unavailable, fall back to mailto.
     const fullName = form.querySelector('#contactName').value.trim();
     const email = form.querySelector('#contactEmail').value.trim();
     const phone = (form.querySelector('#contactPhone').value || '').trim();
@@ -194,6 +203,7 @@
     const message = form.querySelector('#contactMessage').value.trim();
 
     const typeLabel = {
+
       general: 'General message',
       booking: 'Booking enquiry',
       volunteer: 'Volunteer enquiry',
@@ -212,12 +222,17 @@
       message,
     ].join('\n');
 
+    // Keep existing behaviour (mailto) only if you do not have a backend endpoint.
+    // If you do have a backend endpoint at action="/contact", you should remove the mailto block.
+
     const mailto = `mailto:${encodeURIComponent(RECIPIENT_EMAIL)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 
     setResult('Opening your email client...');
     window.location.href = mailto;
 
     // optional: keep values; no reset to avoid losing user text
+
+
   });
 })();
 </script>

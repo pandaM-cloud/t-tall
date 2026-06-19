@@ -332,13 +332,13 @@
           form.addEventListener('submit', function (e) {
             e.preventDefault();
 
-            // Let the app.js validation handler run first (it blocks when invalid).
-            // If inputs are invalid, the browser might still submit; re-check quickly.
+            // Validate with JavaScript before submission.
+            // Prevents showing the response UI with missing required fields.
             if (!form.checkValidity || !form.checkValidity()) {
-              // show a gentle response
               showResponse('Almost there', 'Please complete the required fields so we can process your enquiry.');
               return;
             }
+
 
             const storyline = (form.querySelector('#storyline')?.value || '').trim();
             const selected = (form.querySelector('#service')?.value || '').trim();
