@@ -1,4 +1,4 @@
-# T-Tall Barbershop Website 
+# T-Tall Barbershop Website
 
 ## Student Information
 - **Student Name:** Molatelo Setsiba
@@ -30,6 +30,18 @@ The website is built using **HTML** and **CSS**, with images/media stored in the
 - **Responsive-friendly layout** (based on existing CSS styling in `style_original.css`).
 - Media and imagery via the **Assets** folder.
 
+## AJAX Form Submission (Improved UX)
+Form submission on the following pages is handled asynchronously using **AJAX (fetch API)**:
+- `contact.html` → POSTs to `action="/contact"`
+- `Enquiry.html` → POSTs to `action="enquiry/index.html"`
+
+User experience enhancements include:
+- Immediate UI feedback (e.g., *Sending...* / *Success* messages)
+- Submit button disabled during the async request to prevent double submissions
+- No full page reload/navigation on submit
+
+> Note: The AJAX calls still rely on the existence of the backend routes configured by the `action` attributes.
+
 ## Sitemap
 - **Home:** `index.html`
 - **Services:** `services.html`
@@ -43,6 +55,8 @@ The website is built using **HTML** and **CSS**, with images/media stored in the
     - `index.html`, `services.html`, `about.html`, `Enquiry.html`, `contact.html`
   - Shared styling applied via `style_original.css`
   - Assets organized under `Assets/`
+- **v1.1:**
+  - Improved contact/enquiry submission UX using AJAX (`fetch()`)
 
 ## Repository
 - GitHub: https://github.com/pandaM-cloud/t-tall.git
@@ -54,10 +68,4 @@ The website is built using **HTML** and **CSS**, with images/media stored in the
 <img width="1200" height="1600" alt="me" src="https://github.com/user-attachments/assets/5b264a83-120e-48fd-8409-106c50450614" />
 <img width="1536" height="2048" alt="sj" src="https://github.com/user-attachments/assets/5d38a6d4-759d-4ba8-ab38-df84643602d7" />
 <img width="959" height="1280" alt="black" src="https://github.com/user-attachments/assets/de3c575d-0296-4071-9c94-7fa54dbb84f5" />
-
-
-
-
-
-
 
