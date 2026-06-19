@@ -72,12 +72,15 @@
     <!-- Form -->
     <center>
       <section class="form-container-equiry" aria-label="Enquiry form">
-
-
         <div class="form-top-spacer" aria-hidden="true"></div>
 
-
         <h2 style="margin:0; font-size:22px; color:#fff;">Send us an enquiry</h2>
+
+        <div id="enquiry-response" aria-live="polite" style="display:none; margin:14px 0 0; padding:14px 16px; border-radius:12px; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.18); color:#fff;">
+          <div id="enquiry-response-title" style="font-weight:800; margin-bottom:6px;">Response</div>
+          <div id="enquiry-response-body" style="color:#e6e6e6; font-size:13px; line-height:1.45;"></div>
+        </div>
+
         <p style="margin:0; font-size:13px; color:#fff;">
           Book a haircut in South Africa—choose haircut, fade, dye/colour, beard line-up or house call.
         </p>
@@ -85,12 +88,25 @@
           We’ll get back to you as soon as possible.
         </p>
 
-        <form class="form-equiry" action="#" method="post">
+        <form class="form-equiry" action="#" method="post" novalidate>
+
+        <div class="form-group-equiry">
+          <label for="storyline">Are you enquiring about</label>
+          <select id="storyline" name="storyline" required
+            style="width:100%; padding:12px 16px; border-radius:8px; color:#fff; background:transparent; border:1px solid #414141; font-family:inherit;">
+            <option value="" disabled selected>Select a storyline</option>
+            <option value="services">Services</option>
+            <option value="products">Products</option>
+            <option value="volunteer">Volunteer</option>
+            <option value="sponsor">Sponsor</option>
+          </select>
+        </div>
 
         <div class="form-group-equiry">
           <label for="fullName">Full name</label>
           <input id="fullName" name="fullName" type="text" placeholder="Your name" required minlength="2" />
         </div>
+
 
         <div class="form-group-equiry">
           <label for="email">Email</label>
@@ -103,56 +119,153 @@
         </div>
 
         <div class="form-group-equiry">
-          <label for="service">What do you need?</label>
+          <label id="serviceLabel" for="service">What do you need?</label>
           <select id="service" name="service" required
             style="width:100%; padding:12px 16px; border-radius:8px; color:#fff; background:transparent; border:1px solid #414141; font-family:inherit;">
-            <option value="" disabled selected>Select a service</option>
-            <option value="haircut">Haircut</option>
-            <option value="fade">Fade</option>
-            <option value="dye">Dye / Colour</option>
-            <option value="beard">Beard / Line-up</option>
-            <option value="housecall">House Call</option>
-            <option value="other">Other</option>
+            <option value="" disabled selected>Select an option</option>
           </select>
+          <div class="field-hint" style="margin-top:6px; color:#bdbdbd; font-size:12px;">Choose a storyline first to see relevant options.</div>
         </div>
+
 
         <script>
           (function () {
             const cards = document.querySelectorAll('.service-card-equiry');
             const select = document.getElementById('service');
+            const storylineSelect = document.getElementById('storyline');
+            const serviceLabel = document.getElementById('serviceLabel');
 
-            function setSelected(service) {
-              if (!service) return;
+            const STORYLINE_OPTIONS = {
+              services: {
+                label: 'What do you need?',
+                items: [
+                  { value: 'haircut', text: 'Haircut', meta: 'Clean & sharp' },
+                  { value: 'fade', text: 'Fade', meta: 'Blend perfection' },
+                  { value: 'dye', text: 'Dye / Colour', meta: 'Fresh new look' },
+                  { value: 'beard', text: 'Beard / Line-up', meta: 'Precision styling' },
+                  { value: 'housecall', text: 'House Call', meta: 'On-site booking' },
+                  { value: 'other', text: 'Other', meta: 'Tell us more' },
+                ],
+              },
+              products: {
+                label: 'Which product are you interested in?',
+                items: [
+                  { value: 'spray_small', text: 'Small Spray', meta: 'For easy volume' },
+                  { value: 'spray_tall', text: 'Tall Spray', meta: 'Long-lasting hold' },
+                  { value: 'pomade', text: 'Pomade', meta: 'Texture + shine' },
+                  { value: 'coming_hoodie', text: 'T-shirt / Hoodie', meta: 'Merch enquiries' },
+                  { value: 'coming_shirt', text: 'Shirts', meta: 'Merch enquiries' },
+                  { value: 'other', text: 'Other', meta: 'Tell us what you need' },
+                ],
+              },
+              volunteer: {
+                label: 'How can you help?',
+                items: [
+                  { value: 'event_volunteer', text: 'Volunteer at events', meta: 'Learner support days' },
+                  { value: 'community_volunteer', text: 'Community outreach', meta: 'Local partnerships' },
+                  { value: 'mentorship', text: 'Mentorship', meta: 'Skills + guidance' },
+                  { value: 'setup_cleanup', text: 'Setup / clean-up', meta: 'Support the team' },
+                  { value: 'skills_support', text: 'Skills-based help', meta: 'Design / marketing / etc.' },
+                  { value: 'other', text: 'Other', meta: 'Tell us more' },
+                ],
+              },
+              sponsor: {
+                label: 'What would you like to sponsor?',
+                items: [
+                  { value: 'school_day', text: 'School haircut day', meta: 'Sponsor learners' },
+                  { value: 'community_program', text: 'Community program', meta: 'Ongoing support' },
+                  { value: 'equipment', text: 'Equipment / supplies', meta: 'Tools for the team' },
+                  { value: 'media_awareness', text: 'Media / awareness', meta: 'Promote our mission' },
+                  { value: 'in_kind', text: 'In-kind sponsorship', meta: 'Products or services' },
+                  { value: 'other', text: 'Other', meta: 'Tell us more' },
+                ],
+              },
+            };
 
-              // update UI
+            const setCardsFor = (storylineKey) => {
+              const storyline = STORYLINE_OPTIONS[storylineKey];
+              if (!storyline) return;
+
+              if (serviceLabel) serviceLabel.textContent = storyline.label;
+
+              // Update cards UI (titles/meta)
+              const items = storyline.items;
+              cards.forEach((btn, idx) => {
+                const item = items[idx] || items[items.length - 1];
+                if (!item) return;
+
+                btn.setAttribute('data-service', item.value);
+                const titleEl = btn.querySelector('.service-card-title');
+                const metaEl = btn.querySelector('.service-card-meta');
+                if (titleEl) titleEl.textContent = item.text;
+                if (metaEl) metaEl.textContent = item.meta;
+
+                btn.setAttribute('aria-pressed', 'false');
+                btn.classList.remove('is-selected');
+              });
+
+              // Rebuild select options
+              if (!select) return;
+              select.innerHTML = '';
+              const placeholder = document.createElement('option');
+              placeholder.value = '';
+              placeholder.disabled = true;
+              placeholder.selected = true;
+              placeholder.textContent = 'Select an option';
+              select.appendChild(placeholder);
+
+              items.forEach((item) => {
+                const opt = document.createElement('option');
+                opt.value = item.value;
+                opt.textContent = item.text;
+                select.appendChild(opt);
+              });
+
+              // Reset select value
+              select.value = '';
+            };
+
+            const setSelected = (value) => {
+              if (!value || !select) return;
+
               cards.forEach((btn) => {
-                const pressed = btn.getAttribute('data-service') === service;
+                const pressed = btn.getAttribute('data-service') === value;
                 btn.setAttribute('aria-pressed', String(pressed));
                 btn.classList.toggle('is-selected', pressed);
               });
 
-              // update form select value
-              const option = select.querySelector('option[value="' + service + '"]');
-              if (option) {
-                select.value = service;
-              }
-            }
+              select.value = value;
+            };
 
+            // Card clicks update selection (and the form select)
             cards.forEach((btn) => {
               btn.addEventListener('click', () => {
                 setSelected(btn.getAttribute('data-service'));
               });
             });
 
-            // If user changes via other means, keep selected card in sync.
-            if (select) {
-              select.addEventListener('change', () => setSelected(select.value));
+            // Storyline changes rebuild cards + options
+            if (storylineSelect) {
+              storylineSelect.addEventListener('change', () => {
+                const key = storylineSelect.value;
+                setCardsFor(key);
+              });
             }
+
+            // If select changes, sync card state.
+            if (select) {
+              select.addEventListener('change', () => {
+                setSelected(select.value);
+              });
+            }
+
+            // Initial: if user had saved state, wait for input; otherwise keep default placeholder.
           })();
         </script>
 
 
         <div class="form-group-equiry">
+
           <label for="message">Message</label>
           <textarea id="message" name="message" placeholder="Tell us about your enquiry..." required minlength="10"></textarea>
         </div>
@@ -162,6 +275,84 @@
           <i class="fa-solid fa-paper-plane" aria-hidden="true" style="margin-left:4px;"></i>
         </button>
       </form>
+
+      <script>
+        (function () {
+          const pageFlagKey = '__ttallEnquiryHandledByPage';
+          window[pageFlagKey] = true;
+
+          const form = document.querySelector('form.form-equiry');
+          if (!form) return;
+
+          const responseEl = document.getElementById('enquiry-response');
+          const responseTitle = document.getElementById('enquiry-response-title');
+          const responseBody = document.getElementById('enquiry-response-body');
+
+          const showResponse = (title, body) => {
+            if (responseTitle) responseTitle.textContent = title;
+            if (responseBody) responseBody.innerHTML = body;
+            if (responseEl) responseEl.style.display = 'block';
+          };
+
+          const SIM = {
+            services: {
+              haircut: { title: 'Services enquiry received', body: 'Estimated cost: <b>from R120–R250</b>. Availability: <b>this week</b> depending on barber load. Next step: we’ll confirm your preferred time.' },
+              fade: { title: 'Fade enquiry received', body: 'Estimated cost: <b>from R150–R300</b>. Availability: <b>45–90 minutes turnaround</b> once we confirm your slot. Next step: we’ll message you to book.' },
+              dye: { title: 'Dye / Colour enquiry received', body: 'Estimated cost: <b>from R100–R350</b>. Availability: <b>limited</b> (timing depends on colour & consultation). Next step: we’ll confirm colour options and slot.' },
+              beard: { title: 'Beard / Line-up enquiry received', body: 'Estimated cost: <b>from R60–R200</b>. Availability: <b>quick slots available</b>. Next step: tell us your style in the message.' },
+              housecall: { title: 'House Call enquiry received', body: 'Estimated cost: <b>from R600</b> (travel may apply). Availability: <b>depends on area</b>. Next step: we’ll confirm your suburb and a suitable time.' },
+              other: { title: 'Custom service enquiry received', body: 'Estimated cost: <b>we’ll confirm</b> after reviewing your message. Availability: <b>based on requirements</b>. Next step: reply with any extra details/photos.' },
+            },
+            products: {
+              spray_small: { title: 'Product enquiry received', body: 'Product: <b>Small Spray</b>. Price: <b>R100</b>. Availability: <b>usually in stock</b>—we’ll confirm within 24–48 hours.' },
+              spray_tall: { title: 'Product enquiry received', body: 'Product: <b>Tall Spray</b>. Price: <b>R150</b>. Availability: <b>subject to stock</b>—we’ll confirm quickly.' },
+              pomade: { title: 'Product enquiry received', body: 'Product: <b>Pomade</b>. Price: <b>R80</b>. Availability: <b>in stock</b> most days—next step: collection/delivery details.' },
+              coming_hoodie: { title: 'Merch enquiry received', body: 'Item: <b>T-shirt / Hoodie</b>. Price: <b>coming soon</b>. Availability: <b>pre-orders may open</b> soon. Next step: send your size & preferred colours.' },
+              coming_shirt: { title: 'Merch enquiry received', body: 'Item: <b>Shirts</b>. Price: <b>coming soon</b>. Availability: <b>pre-orders may open</b> soon. Next step: send your size & details.' },
+              other: { title: 'Product enquiry received', body: 'We’ll help find the right product for you. Next step: mention the product name/need in your message and we’ll respond with price + availability.' },
+            },
+            volunteer: {
+              event_volunteer: { title: 'Volunteer enquiry received', body: 'Thanks for wanting to volunteer at events. Next step: share your availability days, and we’ll match you to an upcoming learner support day.' },
+              community_volunteer: { title: 'Volunteer enquiry received', body: 'Thanks for supporting community outreach. Next step: tell us your neighbourhood/community and your ideal role.' },
+              mentorship: { title: 'Mentorship enquiry received', body: 'Mentorship interest confirmed. Next step: we’ll discuss your skills and schedule a short call/meeting.' },
+              setup_cleanup: { title: 'Volunteer enquiry received', body: 'We appreciate support with setup/clean-up. Next step: share what days/times you’re available.' },
+              skills_support: { title: 'Skills-based volunteer enquiry received', body: 'Thanks—skills-based support helps a lot. Next step: tell us your skill area (design/marketing/etc.) and availability.' },
+              other: { title: 'Volunteer enquiry received', body: 'Tell us more about what you’d like to do and when you’re available—we’ll confirm options.' },
+            },
+            sponsor: {
+              school_day: { title: 'Sponsorship enquiry received', body: 'Sponsorship for <b>school haircut day</b>. Next step: we’ll share estimated costs per learner + sponsor packages and availability of upcoming dates.' },
+              community_program: { title: 'Sponsorship enquiry received', body: 'Sponsorship for <b>community program</b>. Next step: we’ll propose a tier based on your budget and confirm schedule.' },
+              equipment: { title: 'Sponsorship enquiry received', body: 'Sponsoring <b>equipment/supplies</b>. Next step: we’ll confirm the items needed and provide estimated costs.' },
+              media_awareness: { title: 'Sponsorship enquiry received', body: 'Media/awareness sponsorship. Next step: share your brand goals and we’ll recommend sponsorship options + deliverables.' },
+              in_kind: { title: 'In-kind sponsorship enquiry received', body: 'In-kind sponsorship noted. Next step: list what you can provide and we’ll confirm fit + next steps.' },
+              other: { title: 'Sponsorship enquiry received', body: 'Tell us your idea and budget range (if any). Next step: we’ll respond with options and a suggested plan.' },
+            },
+          };
+
+          form.addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            // Let the app.js validation handler run first (it blocks when invalid).
+            // If inputs are invalid, the browser might still submit; re-check quickly.
+            if (!form.checkValidity || !form.checkValidity()) {
+              // show a gentle response
+              showResponse('Almost there', 'Please complete the required fields so we can process your enquiry.');
+              return;
+            }
+
+            const storyline = (form.querySelector('#storyline')?.value || '').trim();
+            const selected = (form.querySelector('#service')?.value || '').trim();
+
+            const group = SIM[storyline] || null;
+            const item = (group && selected && group[selected]) ? group[selected] : (group && group.other) ? group.other : null;
+            const fallback = { title: 'Enquiry received', body: 'We’ll review your message and respond with cost, availability, or next steps based on your storyline.' };
+            const res = item || fallback;
+
+            showResponse(res.title, res.body);
+          });
+        })();
+      </script>
+
     </section>
 </center>
     <hr>
