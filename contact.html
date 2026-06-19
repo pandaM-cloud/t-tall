@@ -184,9 +184,18 @@
     e.preventDefault();
 
     if (!validate()) {
-      setResult('Please complete all required fields with valid information.');
+      // Show an error message and highlight the first invalid field.
+      const firstInvalid = form.querySelector(':invalid') || form.querySelector('[required]:invalid');
+      if (firstInvalid) {
+        if (typeof firstInvalid.focus === 'function') firstInvalid.focus();
+        const fieldName = firstInvalid.getAttribute('name') || firstInvalid.id || 'this field';
+        setResult(`Invalid form data. Please check: ${fieldName}.`);
+      } else {
+        setResult('Please complete all required fields with valid information.');
+      }
       return;
     }
+
 
     // Valid: allow normal POST to the action URL.
     // After calling form.submit(), the page will navigate to the action endpoint.
